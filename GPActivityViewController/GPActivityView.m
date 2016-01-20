@@ -38,7 +38,7 @@
         _activityViews = [NSMutableArray arrayWithCapacity:activities.count];
         self.clipsToBounds = YES;
         NSUInteger cancelButtonHeight = 0;
-        
+
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
             if (UI_IS_IOS7()) {
                 self.backgroundColor = [UIColor colorWithWhite:244.f/255.f alpha:1.f];
@@ -49,7 +49,7 @@
                 background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
                 [self addSubview:background];
             }
-            
+
             _cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
             _cancelButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
             [_cancelButton setTitle:NSLocalizedStringFromTable(@"BUTTON_CANCEL", @"GPActivityViewController", @"Cancel") forState:UIControlStateNormal];
@@ -76,11 +76,11 @@
 
             [_cancelButton addTarget:self action:@selector(cancelButtonPressed) forControlEvents:UIControlEventTouchUpInside];
             [self addSubview:_cancelButton];
-            
+
             cancelButtonHeight = height + 15;
         }
-    
-        
+
+
         _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 34, frame.size.width,
                                                                      self.frame.size.height - 34 - cancelButtonHeight)];
         _scrollView.showsHorizontalScrollIndicator = NO;
@@ -89,14 +89,14 @@
         _scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _scrollView.pagingEnabled = YES;
         [self addSubview:_scrollView];
-        
+
         NSInteger index = 0;
         for (GPActivity *activity in activities) {
             UIView *view = [self viewForActivity:activity index:index++];
             [_scrollView addSubview:view];
             [_activityViews addObject:view];
-        }        
-        
+        }
+
         _pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(frame)- 80,
                                                                        CGRectGetWidth(frame), 10)];
         _pageControl.hidesForSinglePage = YES;
@@ -106,7 +106,7 @@
             _pageControl.pageIndicatorTintColor = [UIColor lightGrayColor];
             _pageControl.currentPageIndicatorTintColor = [UIColor colorWithWhite:0.9f alpha:1.f];
         }
-        
+
         [_pageControl addTarget:self action:@selector(pageControlValueChanged:)
                forControlEvents:UIControlEventValueChanged];
         [self addSubview:_pageControl];
@@ -117,7 +117,7 @@
 
 - (UIView *)viewForActivity:(GPActivity *)activity index:(NSInteger)index {
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 80, 80)];
-    
+
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.frame = CGRectMake(10, 0, 59, 59);
     button.tag = index;
@@ -125,7 +125,7 @@
     [button setBackgroundImage:activity.image forState:UIControlStateNormal];
     button.accessibilityLabel = activity.title;
     [view addSubview:button];
-    
+
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 59, 100, 30)];
     label.textAlignment = NSTextAlignmentCenter;
     label.backgroundColor = [UIColor clearColor];
@@ -147,63 +147,66 @@
     [label sizeToFit];
     CGRect frame = label.frame;
     frame.origin.x = roundf((view.frame.size.width - frame.size.width) / 2.0f);
+    if (UI_IS_IOS7()) {
+        frame.origin.y = button.frame.size.height + 8.f;
+    }
     label.frame = frame;
     [view addSubview:label];
-    
+
     return view;
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    
+
     NSUInteger columnsInRow = CGRectGetWidth(self.scrollView.frame) / 100;
     NSUInteger rowsInPage = CGRectGetHeight(self.scrollView.frame) / 100;
-    
+
     if (columnsInRow == 0 || rowsInPage == 0)
         return;
-    
+
     NSUInteger offset = (CGRectGetWidth(self.scrollView.frame) - columnsInRow * 100 + 20) / 2;
-    
+
     NSUInteger page = 0;
     NSUInteger column = 0;
     NSUInteger row = 0;
-    
+
     for (NSUInteger index = 0; index < _activityViews.count; ++index) {
         column = index % columnsInRow;
         row = (index / columnsInRow) % rowsInPage;
         page = index / (columnsInRow * rowsInPage);
-        
+
         UIView *view = [_activityViews objectAtIndex:index];
         view.frame = CGRectMake(offset + 100 * column +  page * _scrollView.frame.size.width,
                                 100 * row, 80, 80);
-        
+
     }
-    
+
     _scrollView.contentSize = CGSizeMake((page +1) * _scrollView.frame.size.width, _scrollView.frame.size.height);
     _pageControl.numberOfPages = page + 1;
-    
+
     if (_pageControl.numberOfPages > 1) {
         _scrollView.scrollEnabled = YES;
     }
 }
 
-#pragma mark - 
+#pragma mark -
 
 - (CGSize)sizeThatFits:(CGSize)size {
     NSUInteger topOffset = 25, bottomOffset = 20;
     NSUInteger minimumSize = CGRectGetHeight(_cancelButton.frame) + topOffset + bottomOffset +
                               CGRectGetHeight(_pageControl.frame);
-    
+
     NSUInteger columnsInRow = size.width / 100;
     NSUInteger rowsInPage = (size.height - minimumSize) / 100;
     NSUInteger rows = _activityViews.count / columnsInRow;
-    
+
     if (_activityViews.count % columnsInRow != 0) {
         rows += 1;
     }
-    
+
     rows = (rows > rowsInPage)? rowsInPage: rows;
-        
+
     return CGSizeMake(size.width,  100 * rows + minimumSize);
 }
 
@@ -218,7 +221,7 @@
 - (void)buttonPressed:(UIButton *)button {
     if ([_delegate respondsToSelector:@selector(activityTappedAtIndex:)]) {
         [_delegate activityTappedAtIndex:button.tag];
-    }    
+    }
 }
 
 #pragma mark - UIScrollViewDelegate
