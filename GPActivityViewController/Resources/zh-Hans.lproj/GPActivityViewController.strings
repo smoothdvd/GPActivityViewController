@@ -1,0 +1,37 @@
+/* Mail */
+"ACTIVITY_MAIL"="邮件";
+
+/* Copy */
+"ACTIVITY_COPY"="复制";
+
+/* Facebook */
+"ACTIVITY_FACEBOOK"="Facebook";
+
+/* Message */
+"ACTIVITY_MESSAGE"="Message";
+
+/* Twitter */
+"ACTIVITY_TWITTER"="Twitter";
+
+/* VKontakte */
+"ACTIVITY_VKONTAKTE"="VKontakte";
+
+/* Odnoklassniki */
+"ACTIVITY_ODNOKLASSNIKI"="Odnoklassniki";
+
+/* Safari */
+"ACTIVITY_SAFARI"="用浏览器打开";
+
+/* Maps */
+"ACTIVITY_MAPS"="用地图打开";
+
+/* Photos */
+"ACTIVITY_PHOTO"="保存到相机胶卷";
+
+"ACTIVITY_CUSTOM"="自定义";
+
+/* Buttons */
+"BUTTON_CANCEL"="取消";
+"BUTTON_DISMISS"="关闭";
+"BUTTON_LOGIN"="登录";
+"BUTTON_POST"="发表";
