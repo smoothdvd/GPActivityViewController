@@ -234,14 +234,15 @@ NSString *const kOKTokenKey = @"kOKTokenKey:info";
     [tokenRequest setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
     
     typeof(self) __weak weakSelf = self;
-    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:tokenRequest success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        [weakSelf setAccessToken:[JSON objectForKey:@"access_token"]];
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:tokenRequest];
+    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject) {
+        [weakSelf setAccessToken:[responseObject objectForKey:@"access_token"]];
         
         if (completion) {
             completion();
         }
-        
-    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+    } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
         if (completion) {
             completion();
         }
@@ -271,20 +272,21 @@ NSString *const kOKTokenKey = @"kOKTokenKey:info";
     [tokenRequest setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
     
     typeof(self) __weak weakSelf = self;
-    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:tokenRequest success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        [weakSelf setAccessToken:[JSON objectForKey:@"access_token"]];
-        [weakSelf setRefreshToken:[JSON objectForKey:@"refresh_token"]];
-        [weakSelf setTokenType:[JSON objectForKey:@"token_type"]];
-
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:tokenRequest];
+    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject) {
+        [weakSelf setAccessToken:[responseObject objectForKey:@"access_token"]];
+        [weakSelf setRefreshToken:[responseObject objectForKey:@"refresh_token"]];
+        [weakSelf setTokenType:[responseObject objectForKey:@"token_type"]];
+        
+        if (weakSelf.completionBlock) {
+            weakSelf.completionBlock();
+        }
+    } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
         if (weakSelf.completionBlock) {
             weakSelf.completionBlock();
         }
         
-    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-        if (weakSelf.completionBlock) {
-            weakSelf.completionBlock();
-        }
-
         [self debugOut:@"%@", error];
     }];
     [operation start];
@@ -308,18 +310,18 @@ NSString *const kOKTokenKey = @"kOKTokenKey:info";
     NSMutableURLRequest *shareRequest = [NSMutableURLRequest requestWithURL:requestURL];
     
     typeof(self) __weak weakSelf = self;
-    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:shareRequest success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        
-        int errorCode = [[JSON objectForKey:@"error_code"] integerValue];
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:shareRequest];
+    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject) {
+        int errorCode = [[responseObject objectForKey:@"error_code"] intValue];
         if (errorCode == 102) {
             [weakSelf renewAccessToken:^() {
                 [weakSelf shareURL:urlString description:description];
             }];
         }
         
-        [self debugOut:@"%@", JSON];
-        
-    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        [self debugOut:@"%@", responseObject];
+    } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
         [self debugOut:@"%@", error];
     }];
     [operation start];

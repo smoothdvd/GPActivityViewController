@@ -123,9 +123,7 @@
     [label sizeToFit];
     CGRect frame = label.frame;
     frame.origin.x = roundf((view.frame.size.width - frame.size.width) / 2.0f);
-    if (UI_IS_IOS7()) {
-        frame.origin.y = button.frame.size.height + 8.f;
-    }
+    frame.origin.y = button.frame.size.height + 8.f;
     label.frame = frame;
     [view addSubview:label];
 
