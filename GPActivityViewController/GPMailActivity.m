@@ -35,9 +35,6 @@ NSString *const GPActivityMail = @"GPActivityMail";
     if (self) {
         self.title = NSLocalizedStringFromTable(@"ACTIVITY_MAIL", @"GPActivityViewController", @"Mail");
         NSString *imageName = @"GPActivityViewController.bundle/shareMail";
-        if (UI_IS_IOS7()) {
-            imageName = [imageName stringByAppendingString:@"7"];
-        }
         self.image = [UIImage imageNamed:imageName];
     }
 
@@ -53,6 +50,10 @@ NSString *const GPActivityMail = @"GPActivityMail";
     NSURL *url = [self.userInfo objectForKey:@"url"];
     
     MFMailComposeViewController *mailComposeViewController = [[MFMailComposeViewController alloc] init];
+    if (!mailComposeViewController) {
+        [self activityDidFinish:NO];
+        return;
+    }
     mailComposeViewController.mailComposeDelegate = self;
     
     NSString *message = @"";

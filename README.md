@@ -1,11 +1,9 @@
 GPActivityViewController
 ========================
 
-Alternative to UIActivityViewController compatible with iOS5.0
+Alternative to UIActivityViewController
 
 ![iOS7 and later](images/Activities-iOS7.png)
-![iOS6 and prior](images/Activities.png)
-
 
 ###Supported activities
 * Facebook
@@ -21,10 +19,11 @@ Alternative to UIActivityViewController compatible with iOS5.0
 
 
 ### Requirements
-* XCode 4.4+
-* Deployment Target iOS5.0+
+* Xcode 6.3+
+* Deployment Target iOS7.0+
 * ARC
- 
+
+Note: 2.0.2 — latest version with iOS5 support
 
 ### Features
 * Landscape support
@@ -51,7 +50,7 @@ pod 'GPActivityViewController', :git => 'https://github.com/gpinigin/GPActivityV
 
 For social networks listed below should be set application callback, for more info see chapter "Application callback".
 
-###Facebook
+###Facebook (2.0.x Only)
 
 * Set up **FacebookAppID** property in your info.plist file, i.e.  FacebookAppID = 12345678
 * Set up URL scheme for facebook redirect: fbFacebookAppID , where FacebookAppID - Facebook application ID
@@ -147,13 +146,6 @@ You can also specify predefined acitivityInfo:
    activity.userInfo = @{@"text":@"My custom activity",
                          @"url":url};
 ```
-
-## Changelog
-
-### 2.0.0
-
-- Call completion handler with nil as activityName in case of dismissing activity view;
-- Replace methods for showing activity view controller, show modally on iPhone and in popover on iPad.
 
 ##Credits
 Partially based on [REActivityViewController](https://github.com/romaonthego/REActivityViewController)

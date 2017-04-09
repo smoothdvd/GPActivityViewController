@@ -35,9 +35,6 @@ NSString *const GPActivityMessage = @"GPActivityMessage";
     if (self) {
         self.title = NSLocalizedStringFromTable(@"ACTIVITY_MESSAGE", @"GPActivityViewController", @"Message");
         NSString *imageName = @"GPActivityViewController.bundle/shareMessage";
-        if (UI_IS_IOS7()) {
-            imageName = [imageName stringByAppendingString:@"7"];
-        }
         self.image = [UIImage imageNamed:imageName];
     }
 
@@ -55,6 +52,11 @@ NSString *const GPActivityMessage = @"GPActivityMessage";
     NSURL *url = [self.userInfo objectForKey:@"url"];
     
     MFMessageComposeViewController *messageComposeViewController = [[MFMessageComposeViewController alloc] init];
+    if (!messageComposeViewController) {
+        [self activityDidFinish:NO];
+        return;
+    }
+
     messageComposeViewController.messageComposeDelegate = self;
     
     NSString *message = @"";
